@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин виртов | Родина РП</title>
+    <style>
+        /* Общие стили */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Шапка */
+        header {
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 1rem 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* Навигация */
+        nav {
+            background: #2a5298;
+            padding: 0.5rem;
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin: 0 1rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        
+        nav ul li a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        /* Основной контент */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        h2 {
+            color: #1e3c72;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        /* Карточки товаров */
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .product {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .product:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-img {
+            height: 180px;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: #555;
+        }
+        
+        .product-info {
+            padding: 1rem;
+        }
+        
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #1e3c72;
+        }
+        
+        .product-price {
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: #2a5298;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background: #1e3c72;
+        }
+        
+        .btn-buy {
+            background: #e74c3c;
+            width: 100%;
+        }
+        
+        .btn-buy:hover {
+            background: #c0392b;
+        }
+        
+        /* Корзина */
+        .cart {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+        }
+        
+        .cart-count {
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        /* Админ-панель */
+        .admin-panel {
+            display: none;
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .admin-header {
+            background: #e74c3c;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .visitor-info {
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+        
+        .logout-btn {
+            display: inline-block;
+            background: #333;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 1rem;
+        }
+        
+        /* Кнопка админа */
+        .admin-btn {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: #e74c3c;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer;
+        }
+        
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .close-modal {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Основной сайт -->
+    <div id="main-site">
+        <header>
+            <h1>Магазин виртов | Родина РП</h1>
+            <p>Приобретайте вирты для вашего персонажа</p>
+        </header>
+        
+        <nav>
+            <ul>
+                <li><a href="#">Главная</a></li>
+                <li><a href="#">Каталог</a></li>
+                <li><a href="#">Правила</a></li>
+                <li><a href="#">Контакты</a></li>
+            </ul>
+        </nav>
+        
+        <div class="container">
+            <h2>Каталог виртуальных товаров</h2>
+            
+            <div class="products">
+                <div class="product">
+                    <div class="product-img">🏠</div>
+                    <div class="product-info">
+                        <h3 class="product-title">Квартира в центре</h3>
+                        <p class="product-price">50,000 виртов</p>
+                        <p>Просторная 3-комнатная квартира в центре города</p>
+                        <button class="btn btn-buy" onclick="addToCart('Квартира в центре', 50000)">Купить</button>
+                    </div>
+                </div>
+                
+                <div class="product">
+                    <div class="product-img">🚗</div>
+                    <div class="product-info">
+                        <h3 class="product-title">Спортивный автомобиль</h3>
+                        <p class="product-price">75,000 виртов</p>
+                        <p>Новый спортивный автомобиль премиум-класса</p>
+                        <button class="btn btn-buy" onclick="addToCart('Спортивный автомобиль', 75000)">Купить</button>
+                    </div>
+                </div>
+                
+                <div class="product">
+                    <div class="product-img">💼</div>
+                    <div class="product-info">
+                        <h3 class="product-title">Бизнес "Кафе"</h3>
+                        <p class="product-price">120,000 виртов</p>
+                        <p>Готовый бизнес - уютное кафе в центре</p>
+                        <button class="btn btn-buy" onclick="addToCart('Бизнес', 120000)">Купить</button>
+                    </div>
+                </div>
+                
+                <div class="product">
+                    <div class="product-img">🛥️</div>
+                    <div class="product-info">
+                        <h3 class="product-title">Яхта</h3>
+                        <p class="product-price">250,000 виртов</p>
+                        <p>Роскошная яхта для морских прогулок</p>
+                        <button class="btn btn-buy" onclick="addToCart('Яхта', 250000)">Купить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Корзина -->
+        <div class="cart" onclick="showCart()">
+            Корзина <span class="cart-count" id="cart-count">0</span>
+        </div>
+        
+        <!-- Кнопка админа -->
+        <div class="admin-btn" id="admin-btn" title="Вход для администратора">A</div>
+    </div>
+    
+    <!-- Админ-панель -->
+    <div class="admin-panel" id="admin-panel">
+        <div class="admin-header">
+            <h2>Административная панель</h2>
+        </div>
+        
+        <div class="visitor-info">
+            <h3>Информация о посетителе</h3>
+            
+            <div class="info-item">
+                <div class="info-label">IP-адрес:</div>
+                <div id="ip-address">Загрузка...</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Геолокация:</div>
+                <div id="location">Загрузка...</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Устройство:</div>
+                <div id="device">Загрузка...</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Браузер:</div>
+                <div id="browser">Загрузка...</div>
+            </div>
+            
+            <div class="info-item">
+                <div class="info-label">Время посещения:</div>
+                <div id="time">Загрузка...</div>
+            </div>
+        </div>
+        
+        <a href="#" class="logout-btn" id="logout-btn">Выйти из админ-панели</a>
+    </div>
+    
+    <!-- Модальное окно корзины -->
+    <div class="modal" id="cart-modal">
+        <div class="modal-content">
+            <h3>Ваша корзина</h3>
+            <div id="cart-items"></div>
+            <p id="cart-total">Итого: 0 виртов</p>
+            <button class="btn close-modal" onclick="hideCart()">Закрыть</button>
+        </div>
+    </div>
+    
+    <!-- Модальное окно покупки -->
+    <div class="modal" id="buy-modal">
+        <div class="modal-content">
+            <h3 id="buy-title">Покупка завершена</h3>
+            <p id="buy-message">Спасибо за покупку!</p>
+            <button class="btn close-modal" onclick="hideBuyModal()">ОК</button>
+        </div>
+    </div>
+    
+    <script>
+        // Пароль администратора (в реальном проекте храните его на сервере)
+        const ADMIN_PASSWORD = "rodina2023";
+        
+        // Корзина
+        let cart = [];
+        
+        // Элементы страницы
+        const mainSite = document.getElementById('main-site');
+        const adminPanel = document.getElementById('admin-panel');
+        const adminBtn = document.getElementById('admin-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const cartModal = document.getElementById('cart-modal');
+        const buyModal = document.getElementById('buy-modal');
+        
+        // Проверка авторизации админа
+        function checkAdminAuth() {
+            return sessionStorage.getItem('isAdmin') === 'true';
+        }
+        
+        // Переключение между сайтом и админ-панелью
+        function toggleAuthState() {
+            if (checkAdminAuth()) {
+                mainSite.style.display = 'none';
+                adminPanel.style.display = 'block';
+                loadVisitorInfo();
+            } else {
+                mainSite.style.display = 'block';
+                adminPanel.style.display = 'none';
+            }
+        }
+        
+        // Загрузка информации о посетителе
+        function loadVisitorInfo() {
+            // Время посещения
+            const now = new Date();
+            document.getElementById('time').textContent = now.toLocaleString();
+            
+            // IP-адрес
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('ip-address').textContent = data.ip;
+                    return data.ip;
+                })
+                .then(ip => {
+                    // Геолокация
+                    return fetch(`https://ipapi.co/${ip}/json/`);
+                })
+                .then(response => response.json())
+                .then(locationData => {
+                    const locationText = `${locationData.city || 'Неизвестно'}, ${locationData.region || 'Неизвестно'}, ${locationData.country_name || 'Неизвестно'}`;
+                    document.getElementById('location').textContent = locationText;
+                })
+                .catch(error => {
+                    console.error('Ошибка получения геолокации:', error);
+                    document.getElementById('location').textContent = 'Не удалось определить';
+                });
+            
+            // Устройство и браузер
+            const userAgent = navigator.userAgent;
+            
+            // Определение устройства
+            let deviceType = 'Компьютер';
+            if (/Mobile|Android|iP(hone|od)/.test(userAgent)) {
+                deviceType = 'Мобильное устройство';
+            } else if (/Tablet|iPad/.test(userAgent)) {
+                deviceType = 'Планшет';
+            }
+            document.getElementById('device').textContent = deviceType;
+            
+            // Определение браузера
+            let browser = 'Неизвестный браузер';
+            if (userAgent.includes('Firefox')) browser = 'Firefox';
+            else if (userAgent.includes('Edg')) browser = 'Edge';
+            else if (userAgent.includes('Chrome')) browser = 'Chrome';
+            else if (userAgent.includes('Safari')) browser = 'Safari';
+            else if (userAgent.includes('Opera')) browser = 'Opera';
+            document.getElementById('browser').textContent = browser;
+        }
+        
+        // Добавление товара в корзину
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCart();
+            
+            // Показываем подтверждение покупки
+            document.getElementById('buy-title').textContent = 'Товар добавлен в корзину';
+            document.getElementById('buy-message').textContent = `${name} за ${price.toLocaleString()} виртов добавлен в вашу корзину.`;
+            buyModal.style.display = 'flex';
+        }
+        
+        // Обновление корзины
+        function updateCart() {
+            document.getElementById('cart-count').textContent = cart.length;
+            
+            // Расчет общей суммы
+            let total = 0;
+            let itemsHtml = '';
+            
+            cart.forEach(item => {
+                total += item.price;
+                itemsHtml += `<p>${item.name} - ${item.price.toLocaleString()} виртов</p>`;
+            });
+            
+            document.getElementById('cart-items').innerHTML = itemsHtml;
+            document.getElementById('cart-total').textContent = `Итого: ${total.toLocaleString()} виртов`;
+        }
+        
+        // Показать корзину
+        function showCart() {
+            updateCart();
+            cartModal.style.display = 'flex';
+        }
+        
+        // Скрыть корзину
+        function hideCart() {
+            cartModal.style.display = 'none';
+        }
+        
+        // Скрыть окно покупки
+        function hideBuyModal() {
+            buyModal.style.display = 'none';
+        }
+        
+        // Обработчики событий
+        adminBtn.addEventListener('click', function() {
+            const password = prompt('Введите пароль администратора:');
+            
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('isAdmin', 'true');
+                toggleAuthState();
+            } else if (password) {
+                alert('Неверный пароль!');
+            }
+        });
+        
+        logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.removeItem('isAdmin');
+            toggleAuthState();
+        });
+        
+        // Проверка параметров URL при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('admin')) {
+                const password = prompt('Введите пароль администратора:');
+                
+                if (password === ADMIN_PASSWORD) {
+                    sessionStorage.setItem('isAdmin', 'true');
+                } else if (password) {
+                    alert('Неверный пароль!');
+                }
+            }
+            
+            toggleAuthState();
+        });
+    </script>
+</body>
+</html>
